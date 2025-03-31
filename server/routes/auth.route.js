@@ -5,8 +5,8 @@ const router = require("express").Router()
 
 router.post("/signup", signupController)
 router.post("/signin", signinController)
-router.get("/logout", logoutController)
-router.post("/refresh-token", refreshTokenController)
+router.get("/logout", protectRoute, logoutController)
+router.post("/refresh-token", protectRoute, refreshTokenController)
 router.get("/profile", protectRoute, profileController)
 
 
