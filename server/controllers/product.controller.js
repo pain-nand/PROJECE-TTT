@@ -64,8 +64,45 @@ const getRecommendedProducts = async (req, res, next) => {
 
 }
 
+const getFeaturedProductController = async (req, res, next) => {
+    try {
+        const featuredProducts = await ProductModel.find({
+            isFeatured: true
+        }).lean()
+        if (!featuredProducts) {
+            return res.status(404).json({ message: "NO featured Products found" })
+        }
+        return res.status(200).json(featuredProducts)
+    }
+    catch (error) {
+        next(error)
+    }
+}
+
+const toggleFeturedProduct = async (req, res, next) => {
+    try {
+        const product = await ProductModel.findById(req.params.id)
+        if (product) {
+            product.isFeatured = !product.isFeatured
+            const updateProduct = await product.save()
+            return res.status(200).json(updateProduct)
+        }
+        else {
+            return res.status(404).json({ message: "Product not found" })
+        }
+    }
+    catch (error) {
+        next(error)
+    }
+
+}
+
+
+
 module.exports = {
     getAllProducts,
     createProduct,
-    getRecommendedProducts
+    getRecommendedProducts,
+    getFeaturedProductController,
+    toggleFeturedProduct
 }
