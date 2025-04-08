@@ -97,6 +97,36 @@ const toggleFeturedProduct = async (req, res, next) => {
 
 }
 
+const deleteProductController = async (req, res, next) => {
+    try {
+        const product = await ProductModel.findById(req.params.id)
+        if(!product) return res.status(404).json({message: 'product not found'})
+        if(product.image) {
+            const publicId = product.image.split("/").pop().split(".")[0]
+
+        }
+        await cloudinary.uploader.destroy(`products/${publicId}`)
+        console.log('product image deleted successfull')
+
+       await ProductModel.findByIdAndDelete(req.params.id)
+       return res.status(200).json({message:"product deleted successfull"})
+    }
+    catch(error) {
+        next(error)
+    }
+
+}
+
+const getProductByCategory = async(req, res, next) => {
+    const {category} = req.body
+    try {
+        const products = await ProductModel.find({category})
+        return res.json({products})
+    }
+    catch(error) {
+        next(error)
+    }
+}
 
 
 module.exports = {
@@ -104,5 +134,7 @@ module.exports = {
     createProduct,
     getRecommendedProducts,
     getFeaturedProductController,
-    toggleFeturedProduct
+    toggleFeturedProduct,
+    deleteProductController,
+    getProductByCategory
 }
